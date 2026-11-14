@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "tag": "v0.1.0",
+  "bytes": 43598,
+  "sha256": "1eb43b756a763106983cbd88418b9c14c6f3cee41cf95f3a3eef522f654a76b9",
+  "certificate_sha256": "102efab0f5bad1f810692f1beef659ea0254dfd8d125140f81b0d3d9d7c7deb8",
+  "prerelease": true,
+  "source_snapshot_preserved": false
+}
