@@ -1,0 +1,30 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+    <application android:label="Lineage DeX" android:theme="@style/AppTheme"
+        android:icon="@drawable/ic_desktop" android:allowBackup="false"
+        android:supportsRtl="true">
+        <activity android:name=".LaunchActivity" android:exported="true" android:noHistory="true"
+            android:taskAffinity="" android:excludeFromRecents="true"
+            android:resizeableActivity="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DesktopActivity" android:exported="true"
+            android:launchMode="singleTask" android:resizeableActivity="true">
+        </activity>
+        <activity android:name=".ExternalDesktopActivity" android:exported="true"
+            android:launchMode="singleTask" android:taskAffinity="dev.lineagedex.monitor"
+            android:resizeableActivity="true" />
+        <service android:name=".DockService" android:exported="false" />
+    </application>
+</manifest>

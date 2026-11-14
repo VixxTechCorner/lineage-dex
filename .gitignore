@@ -1,0 +1,11 @@
+.tools/
+.gradle/
+**/build/
+local.properties
+*.apk
+lineage-dex-crash-*.log
+logs/
+__pycache__/
+*.pyc
+.release-bundle/
+dist/

@@ -1,0 +1,83 @@
+{
+  "repository": "VixxTechCorner/lineage-dex",
+  "versions": [
+    {
+      "version": "0.1.0",
+      "path": "app/build/outputs/apk/debug/app-debug.apk",
+      "bytes": 43598,
+      "sha256": "1eb43b756a763106983cbd88418b9c14c6f3cee41cf95f3a3eef522f654a76b9",
+      "certificate_sha256": "102efab0f5bad1f810692f1beef659ea0254dfd8d125140f81b0d3d9d7c7deb8",
+      "tag": "v0.1.0",
+      "asset": ".release-bundle/v0.1.0/lineage-dex-0.1.0.apk",
+      "title": "Lineage DeX 0.1.0 \u2014 First desktop prototype",
+      "notes": "release-notes/v0.1.0.md",
+      "prerelease": true,
+      "repository_asset": "release-assets/v0.1.0/lineage-dex-0.1.0.apk"
+    },
+    {
+      "version": "0.2.0",
+      "path": "app/build/outputs/apk/monitor/lineage-dex-0.2-debug.apk",
+      "bytes": 49628,
+      "sha256": "90347808f5624235ee7992b8ab55c714b41ed99a255648fff2db17bb0cd327b7",
+      "certificate_sha256": "102efab0f5bad1f810692f1beef659ea0254dfd8d125140f81b0d3d9d7c7deb8",
+      "tag": "v0.2.0",
+      "asset": ".release-bundle/v0.2.0/lineage-dex-0.2.0.apk",
+      "title": "Lineage DeX 0.2.0 \u2014 Monitor prototype",
+      "notes": "release-notes/v0.2.0.md",
+      "prerelease": true,
+      "repository_asset": "release-assets/v0.2.0/lineage-dex-0.2.0.apk"
+    },
+    {
+      "version": "0.3.0",
+      "path": "app/build/outputs/apk/redesign/lineage-dex-0.3-debug.apk",
+      "bytes": 49698,
+      "sha256": "f02645a798b3c39d0bd00bdb175b2ac54563113cf4ecdc5f393eec06f49b1c34",
+      "certificate_sha256": "102efab0f5bad1f810692f1beef659ea0254dfd8d125140f81b0d3d9d7c7deb8",
+      "tag": "v0.3.0",
+      "asset": ".release-bundle/v0.3.0/lineage-dex-0.3.0.apk",
+      "title": "Lineage DeX 0.3.0 \u2014 Historical build \u2014 known startup crash",
+      "notes": "release-notes/v0.3.0.md",
+      "prerelease": true,
+      "repository_asset": "release-assets/v0.3.0/lineage-dex-0.3.0.apk"
+    },
+    {
+      "version": "0.3.1",
+      "path": "app/build/outputs/apk/redesign/lineage-dex-0.3.1-debug.apk",
+      "bytes": 49698,
+      "sha256": "612ea1c907c01034f59a3c43a7c03cad5e7380fc9c815f6abb395d28b1d88e12",
+      "certificate_sha256": "102efab0f5bad1f810692f1beef659ea0254dfd8d125140f81b0d3d9d7c7deb8",
+      "tag": "v0.3.1",
+      "asset": ".release-bundle/v0.3.1/lineage-dex-0.3.1.apk",
+      "title": "Lineage DeX 0.3.1 \u2014 Startup crash fix",
+      "notes": "release-notes/v0.3.1.md",
+      "prerelease": true,
+      "repository_asset": "release-assets/v0.3.1/lineage-dex-0.3.1.apk"
+    },
+    {
+      "version": "0.4.0",
+      "path": "app/build/outputs/apk/multitasking/lineage-dex-0.4-debug.apk",
+      "bytes": 61986,
+      "sha256": "a27782addb9383b3f51278d703a803d5f826a9772c93a6e630e1d5e5b84399cd",
+      "certificate_sha256": "102efab0f5bad1f810692f1beef659ea0254dfd8d125140f81b0d3d9d7c7deb8",
+      "tag": "v0.4.0",
+      "asset": ".release-bundle/v0.4.0/lineage-dex-0.4.0.apk",
+      "title": "Lineage DeX 0.4.0 \u2014 Multitasking prototype \u2014 known placement limitation",
+      "notes": "release-notes/v0.4.0.md",
+      "prerelease": true,
+      "repository_asset": "release-assets/v0.4.0/lineage-dex-0.4.0.apk"
+    },
+    {
+      "version": "0.4.1",
+      "path": "app/build/outputs/apk/multitasking/lineage-dex-0.4.1-debug.apk",
+      "bytes": 61986,
+      "sha256": "bcdfe45c3c166be8b92c10197c1e3cbeebcde010c481c9cae741d634ca1aff1d",
+      "certificate_sha256": "102efab0f5bad1f810692f1beef659ea0254dfd8d125140f81b0d3d9d7c7deb8",
+      "tag": "v0.4.1",
+      "asset": ".release-bundle/v0.4.1/lineage-dex-0.4.1.apk",
+      "title": "Lineage DeX 0.4.1 \u2014 Freeform launch update and 1080p sessions",
+      "notes": "release-notes/v0.4.1.md",
+      "prerelease": true,
+      "repository_asset": "release-assets/v0.4.1/lineage-dex-0.4.1.apk"
+    }
+  ]
+}
