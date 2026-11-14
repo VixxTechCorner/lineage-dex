@@ -133,7 +133,7 @@ def main():
     if not re.fullmatch(r"[0-9a-f]{40}", target) or not token:
         raise ValueError("Run publication in the GitHub Actions workflow")
     for row in rows:
-        sha = target if row["version"] == "0.4.1" else refs.get(row["tag"], "")
+        sha = refs.get(row["tag"], "")
         if not re.fullmatch(r"[0-9a-f]{40}", sha):
             raise ValueError("Missing archival commit for " + row["tag"])
         publish_one(GitHub(token), row, sha)
