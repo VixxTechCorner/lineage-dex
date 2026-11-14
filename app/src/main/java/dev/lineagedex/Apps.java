@@ -91,6 +91,14 @@ final class Apps {
             if(!allowed(c,intent)) {
                 Toast.makeText(c,"Android does not allow this app on the monitor",Toast.LENGTH_LONG).show(); return;
             }
+            boolean floating=mode==Mode.FLOATING || mode==Mode.LEFT || mode==Mode.RIGHT;
+            if(floating && MonitorBridge.available(c)) {
+                android.util.DisplayMetrics m=c.getResources().getDisplayMetrics();
+                WindowPlacement.Layout layout=mode==Mode.LEFT?WindowPlacement.Layout.LEFT:
+                    mode==Mode.RIGHT?WindowPlacement.Layout.RIGHT:WindowPlacement.Layout.FLOATING;
+                int[] b=WindowPlacement.bounds(m.widthPixels,m.heightPixels,m.density,layout,windowSequence++);
+                if(MonitorBridge.launch(c,e,new Rect(b[0],b[1],b[2],b[3]))) { remember(c,e); return; }
+            }
             c.startActivity(intent,options(c,mode));
             remember(c,e);
         } catch (RuntimeException ex) {

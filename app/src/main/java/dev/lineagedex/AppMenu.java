@@ -12,6 +12,7 @@ final class AppMenu extends LinearLayout {
     private final GridLayout grid;
     private final List<Apps.Entry> apps;
     private final Runnable changed;
+    private boolean firstRender=true;
     AppMenu(Context c,List<Apps.Entry> entries,Runnable onChanged) {
         super(c); apps=entries; changed=onChanged; setOrientation(VERTICAL);
         EditText search=new EditText(c); search.setSingleLine(true); search.setTextColor(Ui.TEXT);
@@ -43,11 +44,14 @@ final class AppMenu extends LinearLayout {
             TextView label=Ui.text(c,e.label,12,Ui.TEXT); label.setGravity(Gravity.CENTER);
             label.setMaxLines(2); tile.addView(label,new LayoutParams(-1,Ui.dp(c,38)));
             tile.setContentDescription(e.label);
+            Ui.pressFeedback(tile);
             tile.setOnClickListener(v -> { changed.run(); Apps.launch(c,e); });
             tile.setOnLongClickListener(v -> { Apps.showActions(c,e,apps,changed); return true; });
             GridLayout.LayoutParams p=new GridLayout.LayoutParams();
             p.width=0; p.columnSpec=GridLayout.spec(GridLayout.UNDEFINED,1f); grid.addView(tile,p);
+            if(firstRender && matches<=12) Ui.reveal(tile,(matches-1)*15);
         }
+        firstRender=false;
         if (matches==0) grid.addView(Ui.text(c,"No apps found",16,Ui.MUTED));
     }
 }

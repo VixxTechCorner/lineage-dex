@@ -1,3 +1,7 @@
+# Current build publication
+
+Version 0.5.1 uses **Publish current version**, a separate Actions workflow and `release-current.json`. APK, source ZIP, release notes and checksums live in `releases/v0.5.1/`. The workflow verifies local hashes, creates a draft prerelease, uploads and downloads each asset to verify its SHA-256, then publishes. Existing tags and different release assets are never overwritten. Historical releases remain unchanged.
+
 # Browser-based publication
 
 The repository is now connected through the GitHub integration. Original APKs are stored under `release-assets/`, with known-bug notes and checksums. The **Publish archived versions** Actions workflow publishes six prereleases without a terminal login. It runs on relevant changes to `main` and can be rerun from GitHub Actions → Publish archived versions → Run workflow. Assets remain drafts until their downloaded checksums match. Historical tags point to archive-metadata commits; the current version points to its source publication commit.

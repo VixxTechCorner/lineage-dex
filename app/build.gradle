@@ -6,8 +6,8 @@ android {
         applicationId 'dev.lineagedex'
         minSdk 29
         targetSdk 33
-        versionCode 6
-        versionName '0.4.1'
+        versionCode 8
+        versionName '0.5.1'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

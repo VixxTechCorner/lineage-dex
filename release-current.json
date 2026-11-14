@@ -1,0 +1,12 @@
+{
+  "repository": "VixxTechCorner/lineage-dex",
+  "version": "0.5.1",
+  "tag": "v0.5.1",
+  "title": "Lineage DeX 0.5.1 \u2014 Monitor windows and smoother desktop",
+  "files": {
+    "lineage-dex-0.5.1.apk": "74aace9292ad8f96c7f9341ff45f4dfb707aa73a989639250398686bcaa1dad7",
+    "lineage-dex-0.5.1-source.zip": "a1c9181de8f712e150bb0c846cdd09321d80b72738e69b8c935108d7434f93f8",
+    "RELEASE-NOTES.md": "44cb86dc06adc877ac8a04d9005a52fa23dd68010e9e842b1ba6f0e6f0ed69c3",
+    "SHA256SUMS": "2b6c5206ce7ddc5c85974b87b5c20a5664daf3db32197c4f4f7be2dc2eeee110"
+  }
+}

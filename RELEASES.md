@@ -1,9 +1,10 @@
-# Archived releases
+# Releases
 
 All builds are experimental prereleases. Historical APKs are preserved unchanged; original source snapshots before 0.4.1 were not saved. Each historical tag contains archival metadata, not reconstructed source history.
 
 | Version | Notes | SHA-256 |
 | --- | --- | --- |
+| 0.5.1 | [Monitor windows and smoother desktop](release-notes/v0.5.1.md) | See [release assets](releases/v0.5.1/SHA256SUMS) |
 | 0.1.0 | [First desktop prototype](release-notes/v0.1.0.md) | `1eb43b756a763106983cbd88418b9c14c6f3cee41cf95f3a3eef522f654a76b9` |
 | 0.2.0 | [Monitor prototype](release-notes/v0.2.0.md) | `90347808f5624235ee7992b8ab55c714b41ed99a255648fff2db17bb0cd327b7` |
 | 0.3.0 | [Historical build — known startup crash](release-notes/v0.3.0.md) | `f02645a798b3c39d0bd00bdb175b2ac54563113cf4ecdc5f393eec06f49b1c34` |

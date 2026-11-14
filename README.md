@@ -1,8 +1,52 @@
-# Lineage DeX — prototype 0.4.1
+# Lineage DeX — prototype 0.5.1
 
 [All archived APKs](RELEASES.md) · [GitHub releases](https://github.com/VixxTechCorner/lineage-dex/releases) · [Publication workflow](PUBLISHING.md)
 
 An independent Android desktop experiment for the Lenovo TB-X306X with LineageOS 20 / Android 13. Not affiliated with LineageOS or Samsung. Native Java and Android views, without Google services or runtime libraries.
+
+## Version 0.5.1: desktop motion
+
+Removed the header's Multitask button. Window controls remain available in Settings and with Ctrl+M, and app icon long-press actions still place windows. Added a short desktop entrance, staggered initial shortcuts/app drawer icons, drawer open/close transitions, and press feedback. Shortcut entrances run once per activity instance rather than every time an app returns; search results update without replaying entrances. View property animations respect the system animator-enabled setting; drawer window transitions follow Android's window animation scale. No continuous wallpaper animation is used.
+
+## Version 0.5.0: PC-assisted monitor windows
+
+The desktop now has a rounded header, shortcut cards, a workspace heading, and a Monitor panel with resolution, density and a keep-awake toggle. The original LineageOS taskbar remains in charge of navigation.
+
+The APK's floating-window options remain requests that the ROM can ignore. For monitor mode, the new companion performs launches and task resizing through your already-authorized PC's ADB shell. It checks Android's task report for freeform mode and reports errors instead of claiming placement succeeded. It does not force-stop apps or erase their data. App minimum sizes and the ROM can still constrain bounds. This is implemented but not yet verified on the tablet.
+
+Install the updated APK, then enable the existing multitasking setup and reboot once if you have not done so:
+
+```bash
+bash scripts/install.sh app/build/outputs/apk/debug/app-debug.apk
+python scripts/setup-multitasking.py enable
+# Save open work before rebooting:
+adb reboot
+```
+
+After Android starts, unlock the Lenovo tablet and start the existing 1080p monitor session:
+
+```bash
+bash scripts/monitor.sh usb
+```
+
+In a second terminal, start the companion, then keep it open:
+
+```bash
+cd ~/lineage-dex
+python scripts/monitor-companion.py
+```
+
+Use `--serial SERIAL` if other ADB devices are connected. The companion identifies the X306X using vendor/ODM or system product properties (including GSI installations), and detects the secondary display containing the DeX desktop. With multiple monitor desktops, select `--display ID`. In the companion terminal, `desktop` returns to the workspace, `status` prints the Android task report, and `quit` stops the companion and removes its own ADB reverse mapping. Apps stay open when it exits. Restart it after reconnecting scrcpy or restarting the APK process. Wi-Fi sessions work with the same ADB pairing as monitor.sh.
+
+On the monitor desktop, choose **Settings → Window controls → Open two apps side by side → Side-by-side windows**, or press **Ctrl+M** to open window controls. Ordinary monitor app launches and icon actions for floating, left and right windows also use the companion. The Android split-screen option and fullscreen launches continue using the existing Android path. Without the companion, the APK uses its previous unprivileged launch requests. A configured companion that is unreachable produces an error rather than silently falling back to fullscreen. The UI indicates configuration, not a live connectivity guarantee.
+
+The companion binds only to PC loopback, uses a random session bearer token, restricts requests to the selected display, and accepts validated component names and integer bounds rather than shell text. The APK permits cleartext connections only to loopback. It requires no Google services or root.
+
+For an offline SDK build without Gradle, use `bash scripts/build-offline.sh`. It uses the existing debug key (including Arch's XDG Android directory); set `ANDROID_DEBUG_KEYSTORE` if needed. Output: `app/build/outputs/apk/debug/app-debug.apk`. Full Gradle lint must run on the host because this agent session cannot open the local sockets Gradle requires.
+
+ADB launch/resize reference: https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android13-release/services/core/java/com/android/server/am/ActivityManagerShellCommand.java
+
+## Previous launch implementation
 
 Version 0.4.1 explicitly requests freeform launch mode on Android 10–13, rather than only requesting window bounds. Apps opened normally from the monitor desktop now default to floating mode. Desktop backgrounds remain fullscreen, and Open normally explicitly requests fullscreen. The native LineageOS taskbar stays under the system launcher's control.
 

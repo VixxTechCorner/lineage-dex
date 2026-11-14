@@ -18,6 +18,7 @@ public class DesktopActivity extends Activity {
     private GridLayout shortcuts;
     private TextView clock;
     private TextView monitorStatus;
+    private boolean shortcutsEntered;
     private final DisplayManager.DisplayListener displayListener=new DisplayManager.DisplayListener() {
         public void onDisplayAdded(int id) {
             updateMonitorStatus();
@@ -40,6 +41,7 @@ public class DesktopActivity extends Activity {
     };
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        MonitorBridge.configure(this,getIntent());
         // Retire the old app overlay; the system owns navigation and taskbar UI.
         stopService(new Intent(this,DockService.class));
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -54,18 +56,28 @@ public class DesktopActivity extends Activity {
         TextView menu=Ui.button(this,"Apps",this::showApps);
         menu.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_apps,0,0,0);
         menu.setCompoundDrawablePadding(Ui.dp(this,10)); top.addView(menu);
-        TextView multitask=Ui.button(this,"Multitask",this::showMultitasking);
-        LinearLayout.LayoutParams multitaskParams=new LinearLayout.LayoutParams(-2,-2);
-        multitaskParams.setMarginStart(Ui.dp(this,10)); top.addView(multitask,multitaskParams);
         clock=Ui.text(this,"",13,Ui.TEXT); clock.setGravity(Gravity.END|Gravity.CENTER_VERTICAL);
         clock.setSingleLine(true); clock.setEllipsize(android.text.TextUtils.TruncateAt.END);
         top.addView(clock,new LinearLayout.LayoutParams(0,Ui.dp(this,48),1));
+        TextView monitor=Ui.button(this,"Monitor",this::showMonitorPanel);
+        LinearLayout.LayoutParams monitorParams=new LinearLayout.LayoutParams(-2,-2);
+        monitorParams.setMarginStart(Ui.dp(this,10)); top.addView(monitor,monitorParams);
         TextView settings=Ui.button(this,"Settings",this::showSettings);
         LinearLayout.LayoutParams settingsParams=new LinearLayout.LayoutParams(-2,-2);
         settingsParams.setMarginStart(Ui.dp(this,20)); top.addView(settings,settingsParams);
-        page.addView(top);
+        top.setPadding(Ui.dp(this,10),Ui.dp(this,6),Ui.dp(this,10),Ui.dp(this,6));
+        top.setBackground(Ui.bg(Color.argb(210,19,29,45),Ui.dp(this,20)));
+        top.setElevation(Ui.dp(this,4));
+        HorizontalScrollView toolbar=new HorizontalScrollView(this);
+        toolbar.setHorizontalScrollBarEnabled(false); toolbar.setFillViewport(true);
+        toolbar.addView(top,new HorizontalScrollView.LayoutParams(-1,-2));
+        page.addView(toolbar);
         ScrollView scroll=new ScrollView(this); scroll.setFillViewport(true);
         LinearLayout workspace=Ui.column(this); workspace.setPadding(0,Ui.dp(this,32),0,0);
+        TextView title=Ui.text(this,"Your workspace",30,Ui.TEXT);
+        title.setTypeface(null,Typeface.BOLD); workspace.addView(title);
+        TextView subtitle=Ui.text(this,"Open an app. Make room for another.",14,Ui.MUTED);
+        subtitle.setPadding(0,Ui.dp(this,8),0,Ui.dp(this,28)); workspace.addView(subtitle);
         shortcuts=new GridLayout(this);
         shortcuts.setColumnCount(Math.max(2,Math.min(4,getResources().getConfiguration().screenWidthDp/130)));
         workspace.addView(shortcuts,new LinearLayout.LayoutParams(-2,-2));
@@ -80,11 +92,17 @@ public class DesktopActivity extends Activity {
             WindowInsetsController controller=root.getWindowInsetsController();
             if(controller!=null) controller.show(WindowInsets.Type.systemBars());
         });
+        Ui.reveal(toolbar,0);
+        Ui.reveal(title,40);
+        Ui.reveal(subtitle,70);
         root.setOnLongClickListener(v -> { showSettings(); return true; });
+    }
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent); setIntent(intent); MonitorBridge.configure(this,intent); updateMonitorStatus();
     }
     @Override protected void onResume() {
         super.onResume(); handler.removeCallbacks(tick); tick.run();
-        updateMonitorStatus();
+        updateMonitorStatus(); applyAwake();
         worker.execute(() -> { List<Apps.Entry> loaded=Apps.load(getApplicationContext());
             runOnUiThread(() -> { if (!isDestroyed()) { apps=loaded; renderShortcuts(); } }); });
     }
@@ -97,11 +115,34 @@ public class DesktopActivity extends Activity {
     private void updateMonitorStatus() {
         if(monitorStatus==null) return;
         int id=Displays.currentId(this);
-        if(id!=Display.DEFAULT_DISPLAY) monitorStatus.setText("Monitor workspace");
+        if(id!=Display.DEFAULT_DISPLAY) {
+            android.util.DisplayMetrics m=getResources().getDisplayMetrics();
+            monitorStatus.setText(m.widthPixels+" × "+m.heightPixels+"  ·  "+
+                (MonitorBridge.available(this)?"PC window companion configured":"Monitor workspace"));
+        }
         else {
             int count=Displays.available(this).size();
             monitorStatus.setText(count==0?"":"Monitor connected");
         }
+    }
+    private void showMonitorPanel() {
+        android.util.DisplayMetrics m=getResources().getDisplayMetrics();
+        int id=Displays.currentId(this);
+        String message=m.widthPixels+" × "+m.heightPixels+" · "+m.densityDpi+" DPI"+
+            "\n\n"+(id==0?"Tablet workspace":"Monitor workspace")+
+            "\n"+(MonitorBridge.available(this)?"PC companion configured for this session.":
+            "For controlled floating windows, start monitor-companion.py on your PC after opening monitor mode.");
+        new AlertDialog.Builder(this).setTitle("Monitor session").setMessage(message)
+            .setPositiveButton("Choose display",(d,w) -> showMonitors())
+            .setNeutralButton("Keep screen awake",(d,w) -> {
+                boolean on=Apps.prefs(this).getBoolean("keep_awake",false);
+                Apps.prefs(this).edit().putBoolean("keep_awake",!on).apply(); applyAwake();
+                Toast.makeText(this,!on?"Desktop will stay awake while visible":"Normal screen timeout restored",Toast.LENGTH_SHORT).show();
+            }).setNegativeButton("Close",null).show();
+    }
+    private void applyAwake() {
+        if(Apps.prefs(this).getBoolean("keep_awake",false)) getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
     private void showMonitors() {
         List<Display> displays=Displays.available(this);
@@ -120,10 +161,15 @@ public class DesktopActivity extends Activity {
     @Override protected void onDestroy() { super.onDestroy(); worker.shutdownNow(); }
     private void renderShortcuts() {
         shortcuts.removeAllViews();
+        boolean animate=!shortcutsEntered;
+        int shortcutIndex=0;
         for(Apps.Entry e:Apps.pinned(this,apps)) {
             LinearLayout tile=Ui.column(this); tile.setGravity(Gravity.CENTER);
             tile.setPadding(Ui.dp(this,8),Ui.dp(this,12),Ui.dp(this,8),Ui.dp(this,12));
-            tile.setBackground(Ui.selectable(this)); tile.setFocusable(true);
+            tile.setBackground(new android.graphics.drawable.RippleDrawable(
+                android.content.res.ColorStateList.valueOf(Color.argb(45,218,229,255)),
+                Ui.bg(Color.argb(110,24,38,57),Ui.dp(this,18)),Ui.bg(Color.WHITE,Ui.dp(this,18))));
+            tile.setFocusable(true);
             ImageView icon=new ImageView(this); icon.setImageDrawable(e.icon);
             tile.addView(icon,new LinearLayout.LayoutParams(Ui.dp(this,48),Ui.dp(this,48)));
             TextView label=Ui.text(this,e.label,13,Ui.TEXT); label.setGravity(Gravity.CENTER);
@@ -132,12 +178,16 @@ public class DesktopActivity extends Activity {
             LinearLayout.LayoutParams labelParams=new LinearLayout.LayoutParams(-1,Ui.dp(this,38));
             labelParams.topMargin=Ui.dp(this,8); tile.addView(label,labelParams);
             tile.setContentDescription(e.label);
+            Ui.pressFeedback(tile);
             GridLayout.LayoutParams params=new GridLayout.LayoutParams();
             params.width=Ui.dp(this,104); params.height=Ui.dp(this,122);
             params.setMargins(0,0,Ui.dp(this,12),Ui.dp(this,12)); shortcuts.addView(tile,params);
+            if(animate) Ui.reveal(tile,90+shortcutIndex*25);
+            shortcutIndex++;
             tile.setOnClickListener(v -> Apps.launch(this,e));
             tile.setOnLongClickListener(v -> { Apps.showActions(this,e,apps,this::renderShortcuts); return true; });
         }
+        if(shortcutIndex>0) shortcutsEntered=true;
     }
     private void showMultitasking() {
         String[] actions={"Open two apps side by side","Recent launches","Clear recent launches","Multitasking help"};
@@ -199,6 +249,7 @@ public class DesktopActivity extends Activity {
         if(window!=null) {
             window.setBackgroundDrawableResource(android.R.color.transparent);
             window.setDimAmount(.22f);
+            window.setWindowAnimations(R.style.DrawerWindowAnimation);
             window.setGravity(Gravity.TOP|Gravity.START);
             WindowManager.LayoutParams params=window.getAttributes();
             params.x=Ui.dp(this,16); params.y=Ui.dp(this,68); window.setAttributes(params);
@@ -218,6 +269,7 @@ public class DesktopActivity extends Activity {
         content.addView(Ui.button(this,"Developer options",() -> open(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))));
         content.addView(Ui.text(this,"Use the LineageOS system launcher as your Home app to retain its taskbar. This desktop keeps Android navigation visible; it does not draw a replacement dock.",14,Ui.MUTED));
         content.addView(Ui.button(this,"Home app settings",() -> open(new Intent(Settings.ACTION_HOME_SETTINGS))));
+        content.addView(Ui.button(this,"Window controls",this::showMultitasking));
         content.addView(Ui.button(this,"Connect a monitor",this::showMonitors));
         ScrollView scroll=new ScrollView(this); scroll.addView(content);
         new AlertDialog.Builder(this).setTitle("Desktop settings").setView(scroll).setPositiveButton("Done",null).show();

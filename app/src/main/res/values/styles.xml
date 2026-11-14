@@ -8,4 +8,8 @@
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowBackground">#101A29</item>
     </style>
+    <style name="DrawerWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/drawer_enter</item>
+        <item name="android:windowExitAnimation">@anim/drawer_exit</item>
+    </style>
 </resources>
